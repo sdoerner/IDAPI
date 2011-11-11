@@ -281,8 +281,12 @@ AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data s
 jpt = JPT(theData, 5, 5, noStates)
 dm = DependencyMatrix(theData, noVariables, noStates)
 AppendArray("results.txt", dm)
+AppendString("results.txt", "3 - The dependency list for the HepatitisC data set (dependency, node1, node2)")
 depList = DependencyList(dm)
+AppendArray("results.txt", array(depList))
+AppendString("results.txt", "4 - The spanning tree found (list of arcs (node1, node2))")
 print DepList2Dot(depList, noVariables)
+AppendArray("results.txt", array(SpanningTreeAlgorithm(depList, noVariables)))
 
 #
 # continue as described
