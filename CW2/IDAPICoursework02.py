@@ -110,13 +110,24 @@ def DependencyList(depMatrix):
 # end of coursework 2 task 3
     #return array(depList2)
 
+#
+# Functions implementing the spanning tree algorithm
+# Coursework 2 task 4
+
 class Node:
+  """A Node of an undirected tree"""
   def __init__(self):
     self.neighbours = []
   def addSymmetricNeighbour(self, n):
+    """Makes both nodes self and n neighbours of each other in the undirected graph."""
     self.neighbours.append(n)
     n.neighbours.append(self)
   def reachable(self, searchedFor, comingFrom):
+    """Returns whether the Node searchedFor is reachable from the Node self by
+    performing a DFS from self. Optionally, you can specify a node comingFrom
+    which we will not descend to in the first level. Since our graphs are
+    undirected, we need this for the recursive DFS implementation.
+    """
     if self == searchedFor:
       return True
     else:
@@ -125,28 +136,28 @@ class Node:
           return True
       return False
 
-# Given a list of weighted arcs of the form [weight, node1, node2], produces a maximally weighted
-# spanning tree in the dot format. You can use the dot program to make a nice picture out of it.
+def SpanningTreeAlgorithm(depList, noVariables):
+    spanningTree = []
+    nodes = [Node() for i in range(noVariables)]
+    for dep in depList:
+      if not nodes[dep[1]].reachable(nodes[dep[2]], None):
+        spanningTree.append([dep[1], dep[2]])
+        nodes[dep[1]].addSymmetricNeighbour(nodes[dep[2]])
+    return spanningTree
+
+# Given a sorted (in descending order) list of weighted arcs of the form
+# [weight, node1, node2], produces a maximally weighted spanning tree in the
+# dot format. You can use the dot program to make a nice picture out of it.
 # This is particularly useful if you are not good at drawing.
-def DepList2Dot(noVariables, depList):
-  nodes = [Node() for i in range(noVariables)]
+def DepList2Dot(depList, noVariable):
   lines = []
   lines.append("graph spanningTree {")
-  for dep in depList:
-    if not nodes[dep[1]].reachable(nodes[dep[2]], None):
-      lines.append("%d -- %d;" % (dep[1], dep[2]))
-      nodes[dep[1]].addSymmetricNeighbour(nodes[dep[2]])
+  tree = SpanningTreeAlgorithm(depList, noVariables)
+  for arc in tree:
+    lines.append("%d -- %d;" % (arc[0], arc[1]))
   lines.append("}")
   return "\n".join(lines)
 
-#
-# Functions implementing the spanning tree algorithm
-# Coursework 2 task 4
-
-def SpanningTreeAlgorithm(depList, noVariables):
-    spanningTree = []
-  
-    return array(spanningTree)
 #
 # End of coursework 2
 #
@@ -271,7 +282,7 @@ jpt = JPT(theData, 5, 5, noStates)
 dm = DependencyMatrix(theData, noVariables, noStates)
 AppendArray("results.txt", dm)
 depList = DependencyList(dm)
-print DepList2Dot(noVariables, depList)
+print DepList2Dot(depList, noVariables)
 
 #
 # continue as described
