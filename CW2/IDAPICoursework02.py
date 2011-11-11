@@ -79,9 +79,11 @@ def MutualInformation(jP):
     colSums = [sum(col) for col in jP.transpose()]
     for i in range(jP.shape[0]):
       for j in range(jP.shape[1]):
-        logArgument = jP[i,j] / (rowSums[i] * colSums[j])
-        if (not math.isnan(logArgument)) and logArgument != 0:
-          mi = mi + jP[i,j] * math.log(logArgument, 2.0)
+        denominator = rowSums[i] * colSums[j]
+        if denominator != 0:
+          logArgument = jP[i,j] / (rowSums[i] * colSums[j])
+          if logArgument != 0:
+            mi = mi + jP[i,j] * math.log(logArgument, 2.0)
 # end of coursework 2 task 1
     return mi
 #
