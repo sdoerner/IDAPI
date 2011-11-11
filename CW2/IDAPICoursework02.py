@@ -100,10 +100,45 @@ def DependencyMatrix(theData, noVariables, noStates):
 def DependencyList(depMatrix):
     depList=[]
 # Coursework 2 task 3 should be inserted here
-    
-
+    assert depMatrix.shape[0] == depMatrix.shape[1]
+    # make a list of all triplets
+    for i in range(depMatrix.shape[0]):
+      for j in range(i):
+        depList.append([depMatrix[i,j], i, j])
+    depList2 = sorted(depList, key = lambda x: x[0], reverse=True)
+    return depList2
 # end of coursework 2 task 3
-    return array(depList2)
+    #return array(depList2)
+
+class Node:
+  def __init__(self):
+    self.neighbours = []
+  def addSymmetricNeighbour(self, n):
+    self.neighbours.append(n)
+    n.neighbours.append(self)
+  def reachable(self, searchedFor, comingFrom):
+    if self == searchedFor:
+      return True
+    else:
+      for neighbour in filter(lambda x: x != comingFrom, self.neighbours):
+        if neighbour.reachable(searchedFor, self):
+          return True
+      return False
+
+# Given a list of weighted arcs of the form [weight, node1, node2], produces a maximally weighted
+# spanning tree in the dot format. You can use the dot program to make a nice picture out of it.
+# This is particularly useful if you are not good at drawing.
+def DepList2Dot(noVariables, depList):
+  nodes = [Node() for i in range(noVariables)]
+  lines = []
+  lines.append("graph spanningTree {")
+  for dep in depList:
+    if not nodes[dep[1]].reachable(nodes[dep[2]], None):
+      lines.append("%d -- %d;" % (dep[1], dep[2]))
+      nodes[dep[1]].addSymmetricNeighbour(nodes[dep[2]])
+  lines.append("}")
+  return "\n".join(lines)
+
 #
 # Functions implementing the spanning tree algorithm
 # Coursework 2 task 4
@@ -235,6 +270,9 @@ AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data s
 jpt = JPT(theData, 5, 5, noStates)
 dm = DependencyMatrix(theData, noVariables, noStates)
 AppendArray("results.txt", dm)
+depList = DependencyList(dm)
+print DepList2Dot(noVariables, depList)
+
 #
 # continue as described
 #
