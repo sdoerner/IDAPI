@@ -193,6 +193,18 @@ def ExampleBayesianNetwork(theData, noStates):
     return arcList, cptList
 # Coursework 3 task 2 begins here
 
+def HepatitisBayesianNetwork(theData, noStates):
+  arcList = [[0],[1],[2, 0],[3, 4],[4, 1],[5, 4],[6, 1],[7, 0, 1],[8, 7]]
+  cptList = []
+  for nodeAndParents in arcList:
+    if len(nodeAndParents) == 1:
+      cptList.append(Prior(theData, nodeAndParents[0], noStates))
+    if len(nodeAndParents) == 2:
+      cptList.append(CPT(theData, nodeAndParents[0], nodeAndParents[1], noStates))
+    if len(nodeAndParents) == 3:
+      cptList.append(CPT_2(theData, nodeAndParents[0], nodeAndParents[1], nodeAndParents[2], noStates))
+  return arcList, cptList
+
 # end of coursework 3 task 2
 #
 # Function to calculate the MDL size of a Bayesian Network
@@ -284,9 +296,6 @@ def PrincipalComponents(theData):
 noVariables, noRoots, noStates, noDataPoints, datain = ReadFile("HepatitisC.txt")
 theData = array(datain)
 AppendString("results.txt", "1 - Coursework Three Results by Sebastian Dörner(sd1411)")
-cpt = CPT_2(theData, 2, 0, 1, noStates)
-for i in range(cpt.shape[0]):
-  AppendArray("results.txt", cpt[i])
 #AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data set")
 #jpt = JPT(theData, 5, 5, noStates)
 #dm = DependencyMatrix(theData, noVariables, noStates)
