@@ -227,9 +227,16 @@ def MDLSize(arcList, cptList, noDataPoints, noStates):
 def JointProbability(dataPoint, arcList, cptList):
     jP = 1.0
 # Coursework 3 task 4 begins here
-
-
-# Coursework 3 task 4 ends here 
+    for i in range(len(dataPoint)):
+      cpt = cptList[i]
+      childState = dataPoint[i]
+      parents = arcList[i][1:]
+      if parents:
+        parentStates = map(lambda x: dataPoint[x], parents)
+        jP = jP * cpt[childState].item(tuple(parentStates))
+      else:
+        jP = jP * cpt[childState]
+# Coursework 3 task 4 ends here
     return jP
 #
 # Function to calculate the MDLAccuracy from a data set
@@ -306,6 +313,7 @@ AppendString("results.txt", "1 - Coursework Three Results by Sebastian Dörner(s
 arcList, cptList = HepatitisBayesianNetwork(theData, noStates)
 AppendString("results.txt", "2 - The MDLSize of my Hepatitis network: %f")
 AppendString("results.txt", "%f" % MDLSize(arcList, cptList, noDataPoints, noStates))
+print JointProbability([0, 2, 0, 9, 8, 6, 0, 4, 0], arcList, cptList)
 #AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data set")
 #jpt = JPT(theData, 5, 5, noStates)
 #dm = DependencyMatrix(theData, noVariables, noStates)
