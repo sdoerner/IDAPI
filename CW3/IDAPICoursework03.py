@@ -5,6 +5,7 @@ from IDAPICourseworkLibrary import *
 from numpy import *
 import math
 import operator
+from copy import deepcopy
 #
 # Coursework 1 begins here
 #
@@ -196,8 +197,7 @@ def ExampleBayesianNetwork(theData, noStates):
     return arcList, cptList
 # Coursework 3 task 2 begins here
 
-def HepatitisBayesianNetwork(theData, noStates):
-  arcList = [[0],[1],[2, 0],[3, 4],[4, 1],[5, 4],[6, 1],[7, 0, 1],[8, 7]]
+def cptListFromArcList(arcList):
   cptList = []
   for nodeAndParents in arcList:
     if len(nodeAndParents) == 1:
@@ -206,7 +206,12 @@ def HepatitisBayesianNetwork(theData, noStates):
       cptList.append(CPT(theData, nodeAndParents[0], nodeAndParents[1], noStates))
     if len(nodeAndParents) == 3:
       cptList.append(CPT_2(theData, nodeAndParents[0], nodeAndParents[1], nodeAndParents[2], noStates))
-  return arcList, cptList
+  return cptList
+
+def HepatitisBayesianNetwork(theData, noStates):
+  # from the best spanning tree of coursework 2
+  arcList = [[0],[1],[2, 0],[3, 4],[4, 1],[5, 4],[6, 1],[7, 0, 1],[8, 7]]
+  return arcList, cptListFromArcList(arcList)
 
 # end of coursework 3 task 2
 #
@@ -248,10 +253,27 @@ def MDLAccuracy(theData, arcList, cptList):
     mdlAccuracy = sum(loggedProbabilities)
 # Coursework 3 task 5 ends here
     return mdlAccuracy
+
+def MDLScore(theData, arcList, cptList, noStates):
+  return MDLSize(arcList, cptList, theData.shape[0], noStates) - MDLAccuracy(theData, arcList, cptList)
+
+# Coursework 3 task 6 begins here
+def HighestScoringNetworkByRemovingOneArc(theData, arcList, cptList, noStates):
+  allNetworks = []
+  for arc_index in range(len(arcList)):
+    for parent_index in range(len(arcList[arc_index])-1):
+      newArcList = deepcopy(arcList)
+      newArcList[arc_index].pop(parent_index + 1)
+      newCptList = cptListFromArcList(newArcList)
+      score = MDLScore(theData, newArcList, newCptList, noStates)
+      allNetworks.append((newArcList, score))
+  return min(allNetworks, key=lambda (_,score):score)
+
+# Coursework 3 task 6 ends here
 #
-# End of coursework 2
+# End of coursework 3
 #
-# Coursework 3 begins here
+# Coursework 4 begins here
 #
 def Mean(theData):
     realData = theData.astype(float)
@@ -305,33 +327,21 @@ def PrincipalComponents(theData):
     # Coursework 4 task 6 ends here
     return array(orthoPhi)
 
+# Coursework 4 ends here
+
 #
-# main program part for Coursework 1
+# main program part for Coursework 3
 #
 noVariables, noRoots, noStates, noDataPoints, datain = ReadFile("HepatitisC.txt")
 theData = array(datain)
 AppendString("results.txt", "1 - Coursework Three Results by Sebastian Dörner(sd1411)")
 arcList, cptList = HepatitisBayesianNetwork(theData, noStates)
-AppendString("results.txt", "2 - The MDLSize of my Hepatitis network")
 size = MDLSize(arcList, cptList, noDataPoints, noStates)
-AppendString("results.txt", "%f" % size)
-print JointProbability([0, 2, 0, 9, 8, 6, 0, 4, 0], arcList, cptList)
-AppendString("results.txt", "3 - The MDLAccuracy of my Hepatitis network")
+AppendString("results.txt", "2 - The MDLSize of my Hepatitis network: %f" % size)
 accuracy = MDLAccuracy(theData, arcList, cptList)
-AppendString("results.txt", "%f" % accuracy)
-AppendString("results.txt", "4 - The MDLScore of my Hepatitis network")
-AppendString("results.txt", "%f" % (size - accuracy))
-#AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data set")
-#jpt = JPT(theData, 5, 5, noStates)
-#dm = DependencyMatrix(theData, noVariables, noStates)
-#AppendArray("results.txt", dm)
-#AppendString("results.txt", "3 - The dependency list for the HepatitisC data set (dependency, node1, node2)")
-#depList = DependencyList(dm)
-#AppendArray("results.txt", array(depList))
-#AppendString("results.txt", "4 - The spanning tree found (list of arcs (node1, node2))")
-#print DepList2Dot(depList, noVariables)
-#AppendArray("results.txt", array(SpanningTreeAlgorithm(depList, noVariables)))
-
-#
-# continue as described
-#
+AppendString("results.txt", "3 - The MDLAccuracy of my Hepatitis network: %f" % accuracy)
+score = MDLScore(theData, arcList, cptList, noStates)
+AppendString("results.txt", "4 - The MDLScore of my Hepatitis network: %f" % score)
+bestNetwork, bestScore = HighestScoringNetworkByRemovingOneArc(theData, arcList, cptList, noStates)
+AppendString("results.txt", "5 - The Score of my best network with one arc removed: %f" % bestScore)
+AppendString("results.txt", "The best network is: %s" % bestNetwork)
