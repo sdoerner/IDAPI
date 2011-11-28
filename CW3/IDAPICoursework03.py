@@ -241,11 +241,12 @@ def JointProbability(dataPoint, arcList, cptList):
 #
 # Function to calculate the MDLAccuracy from a data set
 def MDLAccuracy(theData, arcList, cptList):
-    mdlAccuracy=0
 # Coursework 3 task 5 begins here
-
-
-# Coursework 3 task 5 ends here 
+    jointProbabilities = [JointProbability(dataPoint, arcList, cptList) for dataPoint in theData]
+    # do log(a) + log(b) instead of log(a*b) as the product would go too close to zero and we'd get numerical problems
+    loggedProbabilities = map(lambda x: math.log(x, 2.0), jointProbabilities)
+    mdlAccuracy = sum(loggedProbabilities)
+# Coursework 3 task 5 ends here
     return mdlAccuracy
 #
 # End of coursework 2
@@ -311,9 +312,15 @@ noVariables, noRoots, noStates, noDataPoints, datain = ReadFile("HepatitisC.txt"
 theData = array(datain)
 AppendString("results.txt", "1 - Coursework Three Results by Sebastian Dörner(sd1411)")
 arcList, cptList = HepatitisBayesianNetwork(theData, noStates)
-AppendString("results.txt", "2 - The MDLSize of my Hepatitis network: %f")
-AppendString("results.txt", "%f" % MDLSize(arcList, cptList, noDataPoints, noStates))
+AppendString("results.txt", "2 - The MDLSize of my Hepatitis network")
+size = MDLSize(arcList, cptList, noDataPoints, noStates)
+AppendString("results.txt", "%f" % size)
 print JointProbability([0, 2, 0, 9, 8, 6, 0, 4, 0], arcList, cptList)
+AppendString("results.txt", "3 - The MDLAccuracy of my Hepatitis network")
+accuracy = MDLAccuracy(theData, arcList, cptList)
+AppendString("results.txt", "%f" % accuracy)
+AppendString("results.txt", "4 - The MDLScore of my Hepatitis network")
+AppendString("results.txt", "%f" % (size - accuracy))
 #AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data set")
 #jpt = JPT(theData, 5, 5, noStates)
 #dm = DependencyMatrix(theData, noVariables, noStates)
