@@ -4,6 +4,7 @@
 from IDAPICourseworkLibrary import *
 from numpy import *
 import math
+import operator
 #
 # Coursework 1 begins here
 #
@@ -213,10 +214,14 @@ def HepatitisBayesianNetwork(theData, noStates):
 def MDLSize(arcList, cptList, noDataPoints, noStates):
     mdlSize = 0.0
 # Coursework 3 task 3 begins here
-
-
-# Coursework 3 task 3 ends here 
-    return mdlSize 
+    for cpt in cptList:
+      numParameters = cpt.shape[0] - 1
+      additionalDimensions = cpt.shape[1:]
+      numParameters = numParameters * reduce(operator.mul, additionalDimensions, 1)
+      mdlSize = mdlSize + numParameters
+    mdlSize = mdlSize * math.log(noDataPoints, 2.0) / 2.0
+# Coursework 3 task 3 ends here
+    return mdlSize
 #
 # Function to calculate the joint probability of a single data point in a Network
 def JointProbability(dataPoint, arcList, cptList):
@@ -298,6 +303,9 @@ def PrincipalComponents(theData):
 noVariables, noRoots, noStates, noDataPoints, datain = ReadFile("HepatitisC.txt")
 theData = array(datain)
 AppendString("results.txt", "1 - Coursework Three Results by Sebastian Dörner(sd1411)")
+arcList, cptList = HepatitisBayesianNetwork(theData, noStates)
+AppendString("results.txt", "2 - The MDLSize of my Hepatitis network: %f")
+AppendString("results.txt", "%f" % MDLSize(arcList, cptList, noDataPoints, noStates))
 #AppendString("results.txt", "2 - The dependency matrix for the HepatitisC data set")
 #jpt = JPT(theData, 5, 5, noStates)
 #dm = DependencyMatrix(theData, noVariables, noStates)
