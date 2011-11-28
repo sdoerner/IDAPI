@@ -48,8 +48,9 @@ def JPT2CPT(aJPT):
     transposed = aJPT.transpose()
     for col in range(aJPT.shape[1]):
         normalizationFactor = sum(transposed[col])
-        for row in range(aJPT.shape[0]):
-            aJPT[row][col] /= normalizationFactor
+        if normalizationFactor != 0:
+            for row in range(aJPT.shape[0]):
+                aJPT[row][col] /= normalizationFactor
 # coursework 1 taks 4 ends here
     return aJPT
 
