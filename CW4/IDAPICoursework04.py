@@ -283,11 +283,11 @@ def Mean(theData):
 
 def Covariance(theData):
     realData = theData.astype(float)
-    noVariables=theData.shape[1] 
-    covar = zeros((noVariables, noVariables), float)
     # Coursework 4 task 2 begins here
-
-
+    # Although there is numpy.cov, we do this by hand for educational purposes.
+    mean = Mean(theData)
+    meanCenteredData = matrix(map(lambda x: x - mean, realData))
+    covar = meanCenteredData.transpose() * meanCenteredData / (meanCenteredData.shape[0] - 1)
     # Coursework 4 task 2 ends here
     return covar
 def CreateEigenfaceFiles(theBasis):
