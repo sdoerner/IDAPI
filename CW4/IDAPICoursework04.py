@@ -298,11 +298,12 @@ def CreateEigenfaceFiles(theBasis):
     # Coursework 4 task 3 ends here
 
 def ProjectFace(theBasis, theMean, theFaceImage):
-    magnitudes = []
     # Coursework 4 task 4 begins here
-
+    readImage = array(ReadOneImage(theFaceImage))
+    meanCenteredImage = matrix(readImage - theMean)
+    imageInNewSpace = meanCenteredImage * theBasis.transpose()
+    return imageInNewSpace
     # Coursework 4 task 4 ends here
-    return array(magnitudes)
 
 def CreatePartialReconstructions(aBasis, aMean, componentMags):
     adummystatement = 0  #delete this when you do the coursework
@@ -337,3 +338,8 @@ AppendArray("results.txt", Covariance(theData))
 
 eigenfaceBasis = ReadEigenfaceBasis()
 CreateEigenfaceFiles(eigenfaceBasis)
+
+meanImage = array(ReadOneImage("MeanImage.jpg"))
+projectedFace = ProjectFace(eigenfaceBasis, meanImage, "c.pgm")
+AppendString("results.txt", "4 - Coordinates of image c.pgm in terms of the principal component basis")
+AppendArray("results.txt", projectedFace)
