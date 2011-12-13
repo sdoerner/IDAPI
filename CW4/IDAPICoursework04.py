@@ -291,9 +291,10 @@ def Covariance(theData):
     # Coursework 4 task 2 ends here
     return covar
 def CreateEigenfaceFiles(theBasis):
-    adummystatement = 0 #delete this when you do the coursework
     # Coursework 4 task 3 begins here
-
+    for i, principalComponent in enumerate(theBasis):
+      filename = "PrincipalComponent" + str(i) + ".jpg"
+      SaveEigenface(principalComponent, filename)
     # Coursework 4 task 3 ends here
 
 def ProjectFace(theBasis, theMean, theFaceImage):
@@ -333,3 +334,6 @@ AppendString("results.txt", "2 - The mean vector for the Hepatitis C data set")
 AppendList("results.txt", Mean(theData))
 AppendString("results.txt", "3 - The covariance matrix of the Hepatitis C data set")
 AppendArray("results.txt", Covariance(theData))
+
+eigenfaceBasis = ReadEigenfaceBasis()
+CreateEigenfaceFiles(eigenfaceBasis)
