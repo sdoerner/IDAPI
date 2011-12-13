@@ -306,9 +306,14 @@ def ProjectFace(theBasis, theMean, theFaceImage):
     # Coursework 4 task 4 ends here
 
 def CreatePartialReconstructions(aBasis, aMean, componentMags):
-    adummystatement = 0  #delete this when you do the coursework
     # Coursework 4 task 5 begins here
-
+    SaveEigenface(aMean, "0-components.jpg")
+    meanAsRowVector = matrix(aMean)
+    currentlyUsedPrincipalComponents = matrix(zeros(componentMags.shape, float))
+    for i in range(componentMags.shape[1]):
+      currentlyUsedPrincipalComponents[0, i] = componentMags[0, i]
+      currentImage = meanAsRowVector + currentlyUsedPrincipalComponents * aBasis
+      SaveEigenface(ravel(currentImage), str(i+1) + "-components.jpg")
     # Coursework 4 task 5 ends here
 
 def PrincipalComponents(theData):
@@ -343,3 +348,4 @@ meanImage = array(ReadOneImage("MeanImage.jpg"))
 projectedFace = ProjectFace(eigenfaceBasis, meanImage, "c.pgm")
 AppendString("results.txt", "4 - Coordinates of image c.pgm in terms of the principal component basis")
 AppendArray("results.txt", projectedFace)
+CreatePartialReconstructions(eigenfaceBasis, meanImage, projectedFace)
