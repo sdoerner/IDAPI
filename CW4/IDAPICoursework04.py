@@ -276,15 +276,9 @@ def HighestScoringNetworkByRemovingOneArc(theData, arcList, cptList, noStates):
 # Coursework 4 begins here
 #
 def Mean(theData):
-    realData = theData.astype(float)
-    noVariables=theData.shape[1] 
-    mean = []
     # Coursework 4 task 1 begins here
-
-
-
+    return average(theData, 0)
     # Coursework 4 task 1 ends here
-    return array(mean)
 
 
 def Covariance(theData):
