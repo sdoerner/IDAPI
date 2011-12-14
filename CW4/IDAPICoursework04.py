@@ -317,16 +317,29 @@ def CreatePartialReconstructions(aBasis, aMean, componentMags):
     # Coursework 4 task 5 ends here
 
 def PrincipalComponents(theData):
-    orthoPhi = []
-    # Coursework 4 task 3 begins here
+    # Coursework 4 task 6 begins here
     # The first part is almost identical to the above Covariance function, but because the
     # data has so many variables you need to use the Kohonen Lowe method described in lecture 15
     # The output should be a list of the principal components normalised and sorted in descending 
-    # order of their eignevalues magnitudes
+    # order of their eigenvalues magnitudes
 
-    
+    # determine U
+    mean = Mean(theData)
+    realData = theData.astype(float)
+    meanCenteredData = matrix(map(lambda x: x - mean, realData))
+    # solve smaller Eigenvector problem (Kohonen Lowe method)
+    smallerEigenvectorProblem = meanCenteredData * meanCenteredData.transpose();
+    eigenvalues, eigenvectors = linalg.eig(smallerEigenvectorProblem)
+    #restore original eigenvectors
+    originalEigenvectors = meanCenteredData.transpose() * eigenvectors
+    # sort by eigenvalue and normalise
+    # asarray makes sure we can extract vectors from the matrix
+    valuesAndTheirVectors = zip(eigenvalues, asarray(originalEigenvectors.transpose()))
+    valuesAndTheirVectors.sort(key = lambda pair: pair[0], reverse=True)
+    _, eigenVectorsSortedByEigenvalues = zip(*valuesAndTheirVectors) #unzip
+    normalisedVectors = map(lambda v: v / linalg.norm(v), eigenVectorsSortedByEigenvalues)
+    return array(normalisedVectors)
     # Coursework 4 task 6 ends here
-    return array(orthoPhi)
 
 # Coursework 4 ends here
 
@@ -349,3 +362,9 @@ projectedFace = ProjectFace(eigenfaceBasis, meanImage, "c.pgm")
 AppendString("results.txt", "4 - Coordinates of image c.pgm in terms of the principal component basis")
 AppendArray("results.txt", projectedFace)
 CreatePartialReconstructions(eigenfaceBasis, meanImage, projectedFace)
+
+imageData = array(ReadImages())
+myBasis = PrincipalComponents(imageData)
+CreateEigenfaceFiles(myBasis)
+projectedFace = ProjectFace(myBasis, meanImage, "c.pgm")
+CreatePartialReconstructions(myBasis, meanImage, projectedFace)
